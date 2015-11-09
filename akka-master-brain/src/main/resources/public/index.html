@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="myApp" class="no-js"> <!--<![endif]-->
+<head>
+    <!-- <base href="/">-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Master Brain</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css"/>
+    <link rel="stylesheet" href="app.css">
+
+</head>
+<body layout="column" ng-controller="SideNavController as snc">
+<div flex layout="row">
+    <md-sidenav layout="column" class="md-sidenav-left md-whiteframe-z2" md-component-id="left"
+                md-is-locked-open="$mdMedia('gt-md')">
+        <md-toolbar class="md-tall md-hue-2">
+            <span flex>Fast And Furious</span>
+
+            <div layout="column" class="md-toolbar-tools-bottom inset">
+                <div>Master Brain</div>
+            </div>
+        </md-toolbar>
+        <md-list>
+            <md-subheader>Racing</md-subheader>
+            <md-item>
+                <a ng-click="selectedIndex=3">
+                    <md-item-content md-ink-ripple layout="row" layout-align="start center">
+                        <div class="inset">
+                            <ng-md-icon icon="dashboard" style="fill: orange" size="32"></ng-md-icon>
+                        </div>
+                        <div class="inset">Dashboard
+                        </div>
+                    </md-item-content>
+                </a>
+            </md-item>
+            <md-item>
+                <a ng-click="selectedIndex=0">
+                    <md-item-content md-ink-ripple layout="row" layout-align="start center">
+                        <div class="inset">
+                            <ng-md-icon icon="equalizer" style="fill: orange" size="32"></ng-md-icon>
+                        </div>
+                        <div class="inset">Sensors
+                        </div>
+                    </md-item-content>
+                </a>
+            </md-item>
+            <md-item>
+                <a ng-click="selectedIndex=1">
+                    <md-item-content md-ink-ripple layout="row" layout-align="start center">
+                        <div class="inset">
+                            <ng-md-icon icon="directions_car" style="fill: orange" size="32"></ng-md-icon>
+                        </div>
+                        <div class="inset">Race Track
+                        </div>
+                    </md-item-content>
+                </a>
+            </md-item>
+            <md-item>
+                <a ng-click="selectedIndex=2">
+                    <md-item-content md-ink-ripple layout="row" layout-align="start center">
+                        <div class="inset">
+                            <ng-md-icon icon="person" style="fill: orange" size="32"></ng-md-icon>
+                        </div>
+                        <div class="inset">Manual Control
+                        </div>
+                    </md-item-content>
+                </a>
+            </md-item>
+            <md-divider></md-divider>
+            <md-subheader>More</md-subheader>
+            <md-item>
+
+            </md-item>
+        </md-list>
+    </md-sidenav>
+    <md-content flex id="content">
+        <div ng-view></div>
+    </md-content>
+</div>
+<!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
+    your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<!-- In production use:
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+-->
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+<script src="bower_components/angular-material/angular-material.min.js"></script>
+<script src="bower_components/angular-animate/angular-animate.js"></script>
+<script src="bower_components/angular-material-icons/angular-material-icons.min.js"></script>
+<script src="bower_components/angular-aria/angular-aria.min.js"></script>
+<script src="bower_components/angular-resource/angular-resource.js"></script>
+<script src="bower_components/d3/d3.min.js" charset="utf-8"></script>
+<script src="bower_components/lodash/lodash.min.js" charset="utf-8"></script>
+<script src="bower_components/sockjs/sockjs.js"></script>
+<script src="bower_components/stomp-websocket/lib/stomp.js"></script>
+<script src="bower_components/ngRadialGauge/src/ng-radial-gauge-dir.js"></script>
+<!--<script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>-->
+<script src="app.js"></script>
+<script src="nav.js"></script>
+<script src="route-config.js"></script>
+<script src="data/dataService.js"></script>
+<script src="sensors/sensors.js"></script>
+<script src="sensors/sensor.plot.directive.js"></script>
+<script src="sensors/sensor.icon.directive.js"></script>
+<script src="sensors/sensor.options.controller.js"></script>
+<script src="manual/manual.js"></script>
+<script src="dashboard/dashboard.js"></script>
+<script src="stats/stats.js"></script>
+<script src="info/info.js"></script>
+<script src="track/track.js"></script>
+<script src="track/track.plot.directive.js"></script>
+<script src="trackBuilding/track.building.controller.js"></script>
+<script src="components/powergauge/power.gauge.directive.js"></script>
+<script src="commons/angular-stomp.js"></script>
+<script src="commons/stomp.js"></script>
+</body>
+</html>

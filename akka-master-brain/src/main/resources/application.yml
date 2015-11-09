@@ -1,0 +1,25 @@
+logging.level.com.zuehlke: INFO
+spring:
+    application:
+        name: master-brain
+
+server:       # Note that the port MUST be 80 to work in SC cloud!
+  port: 8093  # Note that the port SHOULD NOT be 80 to work locally.
+  #port: 80   # for SC Cloud
+
+masterbrain:
+    name:           akka-master-brain
+    rserve:
+        host:       localhost
+        port:       6311
+        user:       test
+        password:   test123
+    rabbitMq:
+        host:       localhost
+        port:       5672
+        #username: bookies
+        #accessCode: LusgEepQ
+        username:   steffels
+        accessCode: FoptzBAK
+    webSocketPublisher:
+        locationProbabilityThreshold: 0.001

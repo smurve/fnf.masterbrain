@@ -1,0 +1,24 @@
+{
+  "name": "fnf.masterbrain.viz",
+  "description": "Master Brain Web GUI",
+  "version": "0.0.0",
+  "homepage": "",
+  "license": "Apache License Version 2.0",
+  "private": true,
+  "dependencies": {
+    "angular": "1.4.x",
+    "angular-route": "1.4.x",
+    "angular-loader": "1.4.x",
+    "angular-mocks": "~1.4.x",
+    "angular-resource": "1.4.x",
+    "angular-animate": "~1.4.0",
+    "angular-material": "~0.10.x",
+    "angular-material-icons": "~0.4.x",
+    "d3": "3.5.x",
+    "angular-aria": "~1.4.0",
+    "lodash": "~3.9.0",
+    "sockjs": "0.3.4",
+    "stomp-websocket": "2.3.1",
+    "ngRadialGauge": "*"
+  }
+}

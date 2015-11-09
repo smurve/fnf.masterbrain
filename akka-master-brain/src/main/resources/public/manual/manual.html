@@ -1,0 +1,99 @@
+<div layout="column" class="relative" layout-fill="true" role="main">
+	<md-toolbar ng-show="!showSearch">
+		<div class="md-toolbar-tools">
+			<md-button hide-gt-md="true" ng-click="snc.toggleList()"
+				hide-gt-md="true" aria-label="Menu">
+				<ng-md-icon icon="menu"></ng-md-icon>
+			</md-button>
+			<h3>Manual Control</h3>
+			<span flex="true"></span>
+
+			<md-button aria-label="Open Settings" ng-click="showListBottomSheet($event)">
+				<ng-md-icon icon="more_vert"></ng-md-icon>
+			</md-button>
+		</div>
+		<md-tabs md-stretch-tabs="true" class="md-primary"
+			md-selected="data.selectedIndex">
+			<md-tab id="tab1" aria-controls="tab2-content">Manual Control</md-tab>
+			<md-tab id="tab2" aria-controls="tab2-content">Manual Track Building</md-tab>
+		</md-tabs>
+	</md-toolbar>
+
+	<md-content md-scroll-y="true">
+		<ui-view layout="column" layout-fill="true" layout-padding="true">
+			<div class="inset" hide-sm="true"></div>
+			<ng-switch on="data.selectedIndex" class="tabpanel-container" ng-controller="ManualController as manualController">
+				<div role="tabpanel" id="tab1-content" aria-labelledby="tab1"
+					ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()"
+					layout="row" layout-wrap layout-align="center center">
+					<md-card flex-gt-sm="90" flex-gt-md="90">
+						<md-card-content>
+							<h2>Manual Control</h2>
+							<md-list>
+								<md-list-item layout-align="center center">
+									<md-button class="md-raised md-warn" ng-disabled="manualController.safety.code == 'off'">Safety</md-button>
+									<md-button class="md-raised md-warn" ng-disabled="manualController.penalty.type != 'penalty'">Penalty</md-button>
+								</md-list-item>
+								<md-list-item layout-align="center center">
+									<div style="font-size: xx-small">
+										{{manualController.safety.message}}<br/>
+										{{manualController.penalty.message}}
+									</div>
+								</md-list-item>
+								<md-list-item layout-align="center center">
+											<power-gauge data="manualController.value"></power-gauge>
+								</md-list-item>
+								<md-list-item layout-align="center center">
+										<md-slider flex ng-model="manualController.value.newValue" min="0" max="{{manualController.max}}" step="1" aria-label="power" id="power-slider"  class="md-primary" input
+												   ng-disabled="!manualController.activePilot.acceptManualPowerUpdates"></md-slider>
+								</md-list-item>
+								<md-list-item layout-align="center center">
+									<md-select ng-model="manualController.pilot" placeholder="Select pilot algorithm">
+										<md-option ng-repeat="pilot in manualController.pilots"
+												   value="{{pilot}}">{{pilot.name}}
+										</md-option>
+									</md-select>
+									<md-button class="md-raised md-primary"
+											   ng-click="manualController.activatePilot()"
+											   ng-disabled="!manualController.pilot">Load
+									</md-button>
+								</md-list-item>
+							</md-list>
+						</md-card-content>
+					</md-card>
+					<md-card flex-gt-sm="90" flex-gt-md="90" ng-show="manualController.activePilot">
+						<md-card-content>
+							<h2>Active pilot is</h2>
+							Actor: {{manualController.activePilot.name}}<br/>
+							Manual control enabled: {{manualController.activePilot.acceptManualPowerUpdates}}<br/>
+							Description: {{manualController.activePilot.description}}
+						</md-card-content>
+					</md-card>
+				</div>
+			</ng-switch>
+			<ng-switch on="data.selectedIndex" class="tabpanel-container">
+				<div role="tabpanel" id="tab2-content" aria-labelledby="tab2"
+					 ng-switch-when="1" md-swipe-left="next()" md-swipe-right="previous()"
+					 layout="row" layout-align="center center">
+					<md-card flex-gt-sm="90" flex-gt-md="90">
+						<md-card-content ng-controller="TrackBuildingController as trackBuildingController">
+							<h3>Manual Track Building</h3>
+							<md-list>
+								<md-list-item layout-align="center center">
+									Triggers the track building based on prerecorded sensor data instead of waiting until enough data is available.
+								</md-list-item>
+								<md-list-item layout-align="center center">
+									<md-select ng-model="trackBuildingController.selected" placeholder="Track">
+										<md-option ng-repeat="track in trackBuildingController.tracks" value="{{track}}">{{track}}</md-option>
+									</md-select>
+									<md-button class="md-raised md-primary" ng-click="trackBuildingController.loadTrack()" ng-disabled="!trackBuildingController.selected">Load
+									</md-button>
+								</md-list-item>
+							</md-list>
+						</md-card-content>
+					</md-card>
+				</div>
+			</ng-switch>
+		</ui-view>
+	</md-content>
+</div>

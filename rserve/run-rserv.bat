@@ -1,0 +1,1 @@
+docker run --rm -p 6311:6311 zlotcar/rserv

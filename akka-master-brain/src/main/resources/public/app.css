@@ -1,0 +1,64 @@
+/* app css stylesheet */
+
+path.trackStraight {
+  stroke: none;
+  fill: gray;
+}
+path.trackCurve {
+  stroke: none;
+  fill: gray;
+}
+
+path.line { 
+    stroke: #800080;
+    stroke-width: 2;
+    fill: none;
+}
+
+path.lapMatch {
+  stroke: grey;
+  stroke-width: 2;
+  fill: steelblue;
+  opacity: 0.6;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.md-toolbar-tools h1 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: inherit;
+}
+
+h2 {
+  font-weight: 400;
+}
+
+md-content.md-default-theme {
+  background-color: gray;
+}
+
+md-card {
+  background-color: #fff;
+}
+
+.user-avatar {
+  border-radius: 99%;
+}
+
+.lapDifference {
+    text-align: right;
+}
+.lapDuration {
+    text-align: right;
+}
+.bestLap {
+    background-color: lime;
+    font-weight: bold;
+}

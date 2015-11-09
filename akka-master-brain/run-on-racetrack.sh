@@ -1,0 +1,25 @@
+#!/bin/bash
+java \
+-Dmasterbrain.rabbitMq.host=192.168.0.61 \
+-Dmasterbrain.rabbitMq.username=bookies \
+-Dmasterbrain.rabbitMq.accessCode=LusgEepQ \
+-Dmasterbrain.pilot.initialPower=150 \
+-Dmasterbrain.pilot.safetyPower=150 \
+-Dmasterbrain.pilot.republishInterval=500 \
+-Dmasterbrain.pilot.tot.minLapDuration=4000 \
+-Dmasterbrain.pilot.tot.w0mutationRange.0=-10 \
+-Dmasterbrain.pilot.tot.w0mutationRange.1=10 \
+-Dmasterbrain.pilot.tot.w1mutationRange.0=-0.2 \
+-Dmasterbrain.pilot.tot.w1mutationRange.1=0.2 \
+-Dmasterbrain.pilot.tot.w0range.0=140 \
+-Dmasterbrain.pilot.tot.w0range.1=170 \
+-Dmasterbrain.pilot.tot.w1range.0=0.2 \
+-Dmasterbrain.pilot.tot.w1range.1=0.4 \
+-Dmasterbrain.pilot.tot.w2init=-0.003 \
+-Dmasterbrain.pilot.tot.w3init=0.01 \
+-Dmasterbrain.localization.interval=60 \
+-Dmasterbrain.localization.bufferSize=50 \
+-Dmasterbrain.pilot.tho.powerDuringPenalty=151 \
+-Dmasterbrain.pilot.tho.breakPower=150 \
+-Dakka.actor.dsl.inbox-size=100000 \
+-jar target/fnf.masterbrain-1.0.0-SNAPSHOT.jar

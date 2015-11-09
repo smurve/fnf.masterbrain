@@ -1,0 +1,20 @@
+#!/bin/bash
+java \
+-Dmasterbrain.rabbitMq.username=steffels \
+-Dmasterbrain.rabbitMq.accessCode=FoptzBAK \
+-Dmasterbrain.pilot.initialPower=125 \
+-Dmasterbrain.pilot.safetyPower=125 \
+-Dmasterbrain.pilot.tot.minLapDuration=4000 \
+-Dmasterbrain.pilot.tot.w0mutationRange.0=-10 \
+-Dmasterbrain.pilot.tot.w0mutationRange.1=10 \
+-Dmasterbrain.pilot.tot.w1mutationRange.0=-0.2 \
+-Dmasterbrain.pilot.tot.w1mutationRange.1=0.2 \
+-Dmasterbrain.pilot.tot.w0range.0=110 \
+-Dmasterbrain.pilot.tot.w0range.1=130 \
+-Dmasterbrain.pilot.tot.w1range.0=0.2 \
+-Dmasterbrain.pilot.tot.w1range.1=0.4 \
+-Dmasterbrain.pilot.tot.w2init=-0.003 \
+-Dmasterbrain.pilot.tot.w3init=0.01 \
+-Dmasterbrain.localization.interval=80 \
+-Dakka.actor.dsl.inbox-size=10000 \
+-jar target/fnf.masterbrain-1.0.0-SNAPSHOT.jar

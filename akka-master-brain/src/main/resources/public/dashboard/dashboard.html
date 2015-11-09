@@ -1,0 +1,220 @@
+<div layout="column" class="relative" layout-fill="true" role="main">
+    <md-toolbar ng-show="!showSearch">
+        <div class="md-toolbar-tools">
+            <md-button hide-gt-md="true" ng-click="snc.toggleList()"
+                       hide-gt-md="true" aria-label="Menu">
+                <ng-md-icon icon="menu"></ng-md-icon>
+            </md-button>
+            <h3>Dashboard</h3>
+            <span flex="true"></span>
+
+            <md-button aria-label="Open Settings" ng-click="showListBottomSheet($event)">
+                <ng-md-icon icon="more_vert"></ng-md-icon>
+            </md-button>
+        </div>
+        <md-tabs md-stretch-tabs="true" class="md-primary"
+                 md-selected="data.selectedIndex">
+            <md-tab id="tab1" aria-controls="tab2-content">Overview</md-tab>
+        </md-tabs>
+    </md-toolbar>
+
+    <md-content md-scroll-y="true">
+        <ui-view layout="column" layout-fill="true" layout-padding="true">
+            <div class="inset" hide-sm="true"></div>
+            <ng-switch on="data.selectedIndex" class="tabpanel-container">
+                <div role="tabpanel" id="tab1-content" aria-labelledby="tab1"
+                     ng-switch-when="0" md-swipe-left="next()" md-swipe-right="previous()"
+                     layout="row" layout-wrap layout-align="center start"
+                     layout-wrap>
+                    <div layout="row" flex="100" layout-wrap ng-controller="SensorsController as sensorController">
+                            <md-card flex="45" flex-sm="100">
+                                <md-card-content>
+                                        <h3>Z-Sensor</h3>
+                                        <sensor-plot data="sensorController.data"></sensor-plot>
+                                </md-card-content>
+                            </md-card>
+                            <md-card flex="50" flex-sm="100">
+                                <md-card-content>
+                                        <h3>Power</h3>
+                                        <sensor-plot data="sensorController.data"
+                                                     config="sensorController.powerConfig"></sensor-plot>
+                                </md-card-content>
+                            </md-card>
+                    </div>
+                    <div layout="row" flex="100" layout-wrap>
+                        <md-card flex="45" flex-sm="100">
+                            <md-card-content ng-controller="TrackController as trackController">
+                                <div class="md-tile-content" flex="true">
+                                    <h3>Race Track</h3>
+                                    <md-progress-linear class="md-accent" md-mode="determinate"
+                                                        value="{{trackController.trackBuildingState}}"></md-progress-linear>
+                                    <track-plot data="trackController.data"></track-plot>
+                                    <md-button class="md-raised md-primary" ng-click="trackController.reset()">Reset
+                                        <md-tooltip>
+                                            Drops all knowledge about the race and restart learning.
+                                        </md-tooltip>
+                                    </md-button>
+                                    <div>{{message}}</div>
+                                    <ul style="font-size: xx-small">
+                                        <li ng-show="trackController.data.trackStatus.message">{{trackController.data.trackStatus.message}}</li>
+                                        <li ng-show="trackController.data.locationStatus.message">{{trackController.data.locationStatus.message}}</li>
+                                        <li ng-repeat="info in trackController.localization">
+                                            {{info.code}}: {{info.message}}
+                                        </li>
+                                    </ul>
+                                </div>
+                            </md-card-content>
+                        </md-card>
+                        <div layout="row" flex="50" layout-wrap>
+                            <md-card flex="100" flex-sm="100">
+                                <md-card-content ng-controller="ManualController as manualController">
+                                    <h3>Control</h3>
+                                    <md-list>
+                                        <md-list-item layout-align="center center">
+                                            <md-button class="md-raised md-warn" ng-disabled="manualController.safety.code == 'off'">Safety</md-button>
+                                            <md-button class="md-raised md-warn" ng-disabled="manualController.penalty.type != 'penalty'">Penalty</md-button>
+                                        </md-list-item>
+                                        <md-list-item layout-align="center center">
+                                            <div style="font-size: xx-small">
+                                                {{manualController.safety.message}}<br/>
+                                                {{manualController.penalty.message}}
+                                            </div>
+                                        </md-list-item>
+                                        <md-list-item layout-align="center center">
+                                            <power-gauge data="manualController.value"></power-gauge>
+                                        </md-list-item>
+                                        <md-list-item layout-align="center center">
+                                            <md-slider flex ng-model="manualController.value.newValue" min="0" max="{{manualController.max}}" step="1" aria-label="power" id="power-slider"  class="md-primary" input
+                                                       ng-disabled="!manualController.activePilot.acceptManualPowerUpdates"></md-slider>
+                                        </md-list-item>
+                                        <md-list-item layout-align="center center">
+                                            <md-radio-group ng-model="manualController.pilot" ng-change="manualController.activatePilot()">
+                                                <md-radio-button
+                                                        value="{{pilot}}"
+                                                        class="md-primary"
+                                                        ng-repeat="pilot in manualController.pilots">{{pilot.name}}</md-radio-button>
+                                            </md-radio-group>
+                                            <md-button class="md-raised md-fab md-warn md-hue-2"
+                                                       ng-click="manualController.panic()">Panic!
+                                            </md-button>
+                                        </md-list-item>
+                                        <md-list-item layout-align="center center" ng-show="manualController.showProperties()">
+
+                                            <form name="myForm" class="my-form">
+                                                <div layout="row" flex="100" ng-repeat="(key, value) in manualController.properties.properties track by $index" layout-wrap>
+                                                    <div layout="column" flex="60" style="font-weight: bold" layout-wrap>
+                                                        Name
+                                                    </div>
+                                                    <div layout="column" flex="40" style="font-weight: bold" layout-wrap>
+                                                        Value
+                                                    </div>
+                                                </div>
+                                                <div layout="row" flex="100" ng-repeat="(key, value) in manualController.properties.properties track by $index" layout-wrap>
+                                                    <div layout="column" flex="60" layout-wrap>
+                                                        {{key}}
+                                                    </div>
+                                                    <div layout="column" flex="40" layout-wrap>
+                                                        <input name="input" ng-model='manualController.properties.properties[key]'/>
+                                                    </div>
+                                                </div>
+                                                <div layout="row" flex="100" ng-repeat="(key, value) in manualController.properties.properties track by $index" layout-wrap>
+                                                    <div layout="column" flex="40" layout-wrap>
+                                                        <md-button class="md-raised md-primary" ng-click="manualController.submitProperties()">Update</md-button>
+                                                    </div>
+                                                    <div layout="column" flex="60" layout-wrap>
+                                                        <span style="color: rgb(198,40,40);">{{manualController.configError.message}}</span>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </md-list-item>
+                                    </md-list>
+                                </md-card-content>
+                            </md-card>
+                            <md-card flex="100" flex-sm="100">
+                                <md-card-content ng-controller="TrackBuildingController as trackBuildingController">
+                                    <h3>Manual Track Building</h3>
+                                    <md-list>
+                                        <md-list-item layout-align="center center">
+                                            Triggers the track building based on prerecorded sensor data instead of
+                                            waiting until enough data is available.
+                                        </md-list-item>
+                                        <md-list-item layout-align="center center">
+                                            <md-select ng-model="trackBuildingController.selected" placeholder="Track">
+                                                <md-option ng-repeat="track in trackBuildingController.tracks"
+                                                           value="{{track}}">{{track}}
+                                                </md-option>
+                                            </md-select>
+                                            <md-button class="md-raised md-primary"
+                                                       ng-click="trackBuildingController.loadTrack()"
+                                                       ng-disabled="!trackBuildingController.selected">Load
+                                            </md-button>
+                                        </md-list-item>
+                                    </md-list>
+                                </md-card-content>
+                            </md-card>
+                        </div>
+                    </div>
+                    <div layout="row" flex="100" layout-wrap>
+                        <md-card flex="45" flex-sm="100" ng-controller="StatsController as statsController">
+                            <md-card-content>
+                                <h3>Lap Times</h3>
+                                <div ng-show="statsController.bestLap.duration">Best lap: Lap={{statsController.bestLap.lap}}, Duration={{statsController.bestLap.duration/1000}} s</div>
+                                <table class="lapTimes">
+                                    <thead>
+                                        <tr>
+                                            <th>Lap</th>
+                                            <th>Duration</th>
+                                            <th>Diff to last</th>
+                                            <th>Diff to best</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="lap in statsController.lapTimes" ng-class="statsController.getClass(lap)">
+                                            <td class="lapNumber">{{lap.lap}}</td>
+                                            <td class="lapDuration">{{lap.duration/1000}}s</td>
+                                            <td class="lapDifference">{{lap.differenceToLast/1000}}</td>
+                                            <td class="lapDifference">{{lap.differenceToBest/1000}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <md-button class="md-raised md-primary" ng-click="statsController.reset()">Reset</md-button>
+                            </md-card-content>
+                        </md-card>
+                        <md-card flex="50" flex-sm="100" ng-controller="InfosController as infoController">
+                            <md-card-content>
+                                <h3>Infos</h3>
+                                <fieldset class="standard" flex>
+                                    <legend>Filter</legend>
+                                    <div layout="row" layout-wrap>
+                                        <div flex="50" ng-repeat="item in infoController.types">
+                                            <md-checkbox ng-checked="infoController.exists(item, infoController.selected)" ng-click="infoController.toggle(item, infoController.selected)">
+                                                {{ item }}
+                                            </md-checkbox>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <table class="lapTimes" style="font-size: small;">
+                                    <thead>
+                                    <tr>
+                                        <th>type</th>
+                                        <th>code</th>
+                                        <th>message</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="info in infoController.infos">
+                                        <td>{{info.type}}</td>
+                                        <td>{{info.code}}</td>
+                                        <td>{{info.message}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <md-button class="md-raised md-primary" ng-click="infoController.reset()">Reset</md-button>
+                            </md-card-content>
+                        </md-card>
+                    </div>
+                </div>
+            </ng-switch>
+        </ui-view>
+    </md-content>
+</div>
