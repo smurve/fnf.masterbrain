@@ -79,19 +79,8 @@ Parts of the app are written in R that will run on https://www.rforge.net/Rserve
 
 Build the docker image (this only has to be done once!)
 ```
-cd rserve/docker
+cd rserve
 ./build-rserv.sh
-```
-
-### simulib
-
-**Note: don't know if we still need this specific version for the PowerProfile Algorithm.**
-
-We had to change to simulib, so we need to build it.
-
-```
-cd simulib
-mvn clean install
 ```
 
 ### Simulator (AkkaStarterKit)

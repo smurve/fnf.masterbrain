@@ -34,7 +34,7 @@
                     //console.log(data.t);
                     //console.log(data);
                     vm.data.lineData.push(data);
-                    if (vm.data.lineData.length > 200) {
+                    if (vm.data.lineData.length > 50) {
                         vm.data.lineData.shift();
                     }
                     buffer.push(data);

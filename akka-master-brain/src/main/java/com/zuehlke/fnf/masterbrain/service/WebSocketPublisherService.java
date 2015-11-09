@@ -39,7 +39,7 @@ public class WebSocketPublisherService {
     private MasterBrainService masterBrain;
     @Value(CFG_PREFIX + ".locationProbabilityThreshold}")
     private double locationProbabilityThreshold;
-    private DataTrottle sensorDataTrottle = new DataTrottle(200, TimeUnit.MILLISECONDS);
+    private DataTrottle sensorDataTrottle = new DataTrottle(100, TimeUnit.MILLISECONDS);
     private DataTrottle trackBuildingStateTrottle = new DataTrottle(2, TimeUnit.SECONDS);
     private DataTrottle locationsTrottle = new DataTrottle(100, TimeUnit.MILLISECONDS);
     private DataTrottle powerTrottle = new DataTrottle(100, TimeUnit.MILLISECONDS);

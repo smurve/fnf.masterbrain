@@ -1,0 +1,40 @@
+{
+ "straights": [
+	 {
+		"x_start": [      0 ],
+		"y_start": [     -1 ],
+		"x_end": [      0 ],
+		"y_end": [ -2 ],
+		"x_dir": [      0 ],
+		"y_dir": [      1 ],
+		"sector_ind": [ 1 ] 
+	},
+	{
+		"x_start": [      0 ],
+		"y_start": [      -3 ],
+		"x_end": [      0 ],
+		"y_end": [ -3.75 ],
+		"x_dir": [      0 ],
+		"y_dir": [      1 ],
+		"sector_ind": [ 1 ] 
+	}
+ ],
+ "curves": [
+	{
+		"c_x": [      -0.1 ],
+		"c_y": [ 0.7 ],
+		"ang_start": [ 3.1416 ],
+		"ang_end": [      0 ] 
+	},{
+		"c_x": [      -0.1 ],
+		"c_y": [ 0.7 ],
+		"ang_start": [  -0.05 ],
+		"ang_end": [   -0.95 ]
+	},{
+		"c_x": [      1 ],
+		"c_y": [ -1 ],
+		"ang_start": [ 2.15 ],
+		"ang_end": [      3.1416 ]
+	}
+ ] 
+}

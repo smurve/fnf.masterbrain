@@ -1,0 +1,44 @@
+[
+ {
+ "start_ind":    718,
+"start_t":  14340,
+"end_ind":   1274,
+"end_t":  25460 
+},
+{
+ "start_ind":   1275,
+"start_t":  25480,
+"end_ind":   1839,
+"end_t":  36760 
+},
+{
+ "start_ind":   1840,
+"start_t":  36780,
+"end_ind":   2404,
+"end_t":  48060 
+},
+{
+ "start_ind":   2405,
+"start_t":  48080,
+"end_ind":   2964,
+"end_t":  59260 
+},
+{
+ "start_ind":   2965,
+"start_t":  59280,
+"end_ind":   3523,
+"end_t":  70440 
+},
+{
+ "start_ind":   3524,
+"start_t":  70460,
+"end_ind":   4084,
+"end_t":  81660 
+},
+{
+ "start_ind":   4085,
+"start_t":  81680,
+"end_ind":   4644,
+"end_t":  92860 
+} 
+]
