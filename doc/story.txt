@@ -1,0 +1,2 @@
+Data analytics in action. A self-learning slot car 
+evolving from rookie to champ solely training a neural network in an evolutionary way!
