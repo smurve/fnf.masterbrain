@@ -1,15 +1,17 @@
 package com.zuehlke.fnf.masterbrain.akka.trainontrack;
 
 import akka.actor.ActorRef;
+import akka.dispatch.Futures;
+import akka.dispatch.OnComplete;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.Configuration;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.messages.ScoredGenom;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.spi.Evaluation;
-import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.concurrent.Await;
 import scala.concurrent.Future;
+import scala.concurrent.Promise;
 import scala.concurrent.duration.Duration;
 
 import java.util.concurrent.TimeUnit;
@@ -29,37 +31,61 @@ public class TOTEvaluation implements Evaluation<TOTGenom> {
     }
 
     @Override
-    public ScoredGenom<TOTGenom> evaluate(TOTGenom genom, Configuration configuration) {
+    public Future<ScoredGenom<TOTGenom>> evaluate(TOTGenom genom, Configuration configuration) {
         LOGGER.debug("{}: genom: {}", instance, genom);
+        final Promise<ScoredGenom<TOTGenom>> promise = Futures.promise();
+
         boolean useCache = (Boolean) configuration.getCustomProperties().get(TOTPilotActor.KEY_USE_CACHE);
         scoreDao.setEnabled(useCache);
         ScoredGenom<TOTGenom> existing = scoreDao.loadExistingScore(genom, configuration);
         if (existing != null) {
-            return existing;
+            promise.success(existing);
         }
 
-        ActorRef learner = (ActorRef) configuration.getCustomProperties().get(TOTPilotActor.KEY_LEARNER_REF);
-        try {
+        if (!promise.isCompleted()) {
+            ActorRef learner = (ActorRef) configuration.getCustomProperties().get(TOTPilotActor.KEY_LEARNER_REF);
+            Timeout startTimeout = new Timeout(Duration.create(10, TimeUnit.MINUTES));
+            Future<Object> future = Patterns.ask(learner, StartPermission.ask, startTimeout);
+            future.andThen(new OnComplete<Object>() {
+                @Override
+                public void onComplete(Throwable throwable, Object o) throws Throwable {
+                    if (throwable == null) {
+                        StartPermission permission = (StartPermission) o;
+                        if (StartPermission.terminate.equals(permission)) {
+                            LOGGER.debug("{}: Terminating", instance);
+                            promise.success(new ScoredGenom<>(genom, Double.MAX_VALUE));
+                            return;
+                        }
 
-            Timeout startTimeout = new Timeout(Duration.create(7, TimeUnit.DAYS));
-            StartPermission permission = (StartPermission) Await.result(Patterns.ask(learner, StartPermission.ask, startTimeout), startTimeout.duration());
-            if (StartPermission.terminate.equals(permission)) {
-                LOGGER.debug("{}: Terminating", instance);
-                return new ScoredGenom<>(genom, Double.MAX_VALUE);
-            }
-            LOGGER.debug("{}: start evaluation", instance);
 
-            Timeout evaluationTimeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
-            Future<Object> future = Patterns.ask(learner, genom, evaluationTimeout);
-            ScoredGenom result = (ScoredGenom) Await.result(future, evaluationTimeout.duration());
-            LOGGER.debug("{}: got a result. {}", instance, result);
-            scoreDao.storeScore(result);
-            return result;
-        } catch (Exception e) {
-            LOGGER.warn("{}: Evaluation timeout.", instance);
-            learner.tell(StartPermission.terminate, ActorRef.noSender());
-            return new ScoredGenom<>(genom, Double.MAX_VALUE);
+                        LOGGER.debug("{}: start evaluation", instance);
+
+                        Timeout evaluationTimeout = new Timeout(Duration.create(30, TimeUnit.SECONDS));
+                        Future<Object> future = Patterns.ask(learner, genom, evaluationTimeout);
+                        future.andThen(new OnComplete<Object>() {
+                            @Override
+                            public void onComplete(Throwable throwable, Object o) throws Throwable {
+                                if (throwable == null) {
+                                    ScoredGenom result = (ScoredGenom) o;
+                                    LOGGER.debug("{}: got a result. {}", instance, result);
+                                    scoreDao.storeScore(result);
+                                    promise.success(result);
+                                } else {
+                                    LOGGER.info("Evaulation failed.", throwable);
+                                }
+                            }
+                        }, configuration.getExecutionContextExecutor());
+
+                        return;
+                    } else {
+                        LOGGER.warn("{}: Evaluation timeout.", instance);
+                        learner.tell(StartPermission.terminate, ActorRef.noSender());
+                        promise.success(new ScoredGenom<>(genom, Double.MAX_VALUE));
+                    }
+                }
+            }, configuration.getExecutionContextExecutor());
         }
+        return promise.future();
     }
 
 

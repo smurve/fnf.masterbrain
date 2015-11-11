@@ -34,7 +34,7 @@ public class GeneticAlgorithmTest extends TestKit {
         ActorRef callback = system().actorOf(Props.create(ResultActor.class));
 
         Configuration<BigInteger> config = new Configuration<>(28, KnapsackEvaluation.class, KnapsackFitnessFunction.class, KnapsackPairingAndMutation.class, KnapsackTermination
-                .class, null, callback);
+                .class, null, callback, system().dispatcher());
         ActorRef geneticAlgorithm = system().actorOf(GAActor.props(config));
         geneticAlgorithm.tell(createInitialPopulation(), ActorRef.noSender());
 

@@ -7,14 +7,13 @@ import akka.pattern.Patterns;
 import com.google.common.collect.ImmutableList;
 import com.typesafe.config.Config;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
-import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.GAActor;
-import com.zuehlke.fnf.masterbrain.akka.messages.*;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.Configuration;
+import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.GAActor;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.messages.Population;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.messages.ScoredGenom;
+import com.zuehlke.fnf.masterbrain.akka.messages.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.concurrent.Await;
 import scala.concurrent.Future;
 import scala.concurrent.duration.Duration;
 import scala.concurrent.duration.FiniteDuration;
@@ -186,13 +185,17 @@ public class TOTPilotActor extends UntypedActor {
 
     private void stopGa() {
         Future<Boolean> stopped = Patterns.gracefulStop(geneticAlgo, Duration.create(5, TimeUnit.SECONDS));
-        try {
-            Await.result(stopped, Duration.create(6, TimeUnit.SECONDS));
-            LOGGER.debug("GA stopped.");
-        } catch (Exception e) {
-            LOGGER.error("Graceful stop of GA actor failed.", e);
-        }
-        geneticAlgo = null;
+        stopped.andThen(new OnComplete<Boolean>() {
+            @Override
+            public void onComplete(Throwable throwable, Boolean aBoolean) throws Throwable {
+                if (throwable == null) {
+                    LOGGER.debug("GA stopped.");
+                } else {
+                    LOGGER.error("Graceful stop of GA actor failed.", throwable);
+                }
+                geneticAlgo = null;
+            }
+        }, context().dispatcher());
     }
 
     private void handleTrack(final Track message) throws InterruptedException {
@@ -215,7 +218,7 @@ public class TOTPilotActor extends UntypedActor {
         customProperties.put(KEY_CONFIG, config);
 
         Configuration configuration = new Configuration<>(config.getPopulationSize(), TOTEvaluation.class, TOTFitnessFunction.class, TOTPairingAndMutation.class,
-                TOTTermination.class, customProperties, getSelf());
+                TOTTermination.class, customProperties, getSelf(), context().dispatcher());
 
         if (geneticAlgo != null) {
             stopGa();

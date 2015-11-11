@@ -30,7 +30,7 @@ public class NumberGuessTest {
         new JavaTestKit(akka.getSystem()) {{
 
             JavaTestKit resultActor = akka.newProbe();
-            Configuration<Integer> configuration = new Configuration(100, NumberGuessingEvaluation.class, NumberGuessingFitnessFunction.class, NumberGuessingPairing.class, NumberGuessingTermination.class, new HashMap<>(), resultActor.getRef());
+            Configuration<Integer> configuration = new Configuration(100, NumberGuessingEvaluation.class, NumberGuessingFitnessFunction.class, NumberGuessingPairing.class, NumberGuessingTermination.class, new HashMap<>(), resultActor.getRef(), getSystem().dispatcher());
 
             ActorRef geneticAlgorithm = akka.actorOf(GAActor.props(configuration));
 

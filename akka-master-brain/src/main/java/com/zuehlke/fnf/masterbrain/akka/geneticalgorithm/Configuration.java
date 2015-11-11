@@ -8,6 +8,7 @@ import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.spi.PairingAndMutation;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.spi.Termination;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.concurrent.ExecutionContextExecutor;
 
 import java.util.Map;
 
@@ -24,9 +25,10 @@ public class Configuration<G> {
 
     private final Map<Object, Object> customProperties;
     private final ActorRef resultConsumer;
+    private ExecutionContextExecutor executionContextExecutor;
 
     public Configuration(final int populationSize, final Class<? extends Evaluation<G>> evaluation, final Class<? extends FitnessFunction<G>> fitnessFunction, final Class<? extends PairingAndMutation<G>> pairing, final
-    Class<? extends Termination<G>> termination, Map<Object, Object> customProperties, final ActorRef resultConsumer) {
+    Class<? extends Termination<G>> termination, Map<Object, Object> customProperties, final ActorRef resultConsumer, ExecutionContextExecutor executionContextExecutor) {
         this.evaluationImpl = evaluation;
         this.pairingImpl = pairing;
         this.fitnessFunctionImpl = fitnessFunction;
@@ -34,6 +36,11 @@ public class Configuration<G> {
         this.terminationImpl = termination;
         this.customProperties = customProperties;
         this.resultConsumer = resultConsumer;
+        this.executionContextExecutor = executionContextExecutor;
+    }
+
+    public ExecutionContextExecutor getExecutionContextExecutor() {
+        return executionContextExecutor;
     }
 
     public Evaluation<G> getEvaluationImpl() {

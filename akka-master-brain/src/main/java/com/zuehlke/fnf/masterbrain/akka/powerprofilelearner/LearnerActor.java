@@ -137,7 +137,7 @@ public class LearnerActor extends UntypedActor {
             customProperties.put(KEY_LEARNER_REF, getSelf());
             customProperties.put(KEY_MAX_ITERATIONS, this.gaIterations);
             Configuration configuration = new Configuration<>(populationSize, PowerProfileEvaluation.class, PowerProfileFitnessFunction.class, PowerProfilePairingAndMutation.class,
-                    PowerPorfileTermination.class, customProperties, getSelf());
+                    PowerPorfileTermination.class, customProperties, getSelf(), context().dispatcher());
 
             // GAActors killing themselfs after finish computation
             ref.add(getContext().actorOf(GAActor.props(configuration), GAActor.class.getSimpleName() + "-" + i));

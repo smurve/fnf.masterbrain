@@ -1,6 +1,7 @@
 package com.zuehlke.fnf.masterbrain.akka.geneticalgorithm;
 
 import akka.dispatch.Futures;
+import akka.dispatch.OnComplete;
 import akka.pattern.Patterns;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.messages.Population;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.messages.ScoredGenom;
@@ -55,17 +56,21 @@ class EvaluationActor<G> extends AbstractGAActor<G> {
         scoredGenoms = new ArrayList<>(populationSize);
         for (G genom : population) {
 
-            Future evaluate = Futures.future(() -> {
-                Evaluation<G> evaluationFunction = getConfiguration().getEvaluationImpl();
-                try {
-                    return evaluationFunction.evaluate(genom, getConfiguration());
-                } catch(Exception e) {
-                    LOGGER.warn("Evaluation failed.", e);
-                    throw e;
+            Evaluation<G> evaluationFunction = getConfiguration().getEvaluationImpl();
+            Future<ScoredGenom<G>> future = evaluationFunction.evaluate(genom, getConfiguration());
+            future.andThen(new OnComplete<ScoredGenom<G>>() {
+
+                @Override
+                public void onComplete(Throwable throwable, ScoredGenom<G> gScoredGenom) throws Throwable {
+                   if (throwable == null) {
+                       LOGGER.debug("Evaluation done. ScoredGenom received");
+                       self().tell(gScoredGenom, self());
+                   } else {
+                       LOGGER.warn("Evaluation failed.", throwable);
+                   }
                 }
             }, context().dispatcher());
 
-            Patterns.pipe(evaluate, getContext().system().dispatcher()).to(getSelf());
         }
 
 

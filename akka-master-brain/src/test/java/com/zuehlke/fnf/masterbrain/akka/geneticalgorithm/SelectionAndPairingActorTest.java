@@ -3,6 +3,7 @@ package com.zuehlke.fnf.masterbrain.akka.geneticalgorithm;
 import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.testkit.JavaTestKit;
+import akka.util.Timeout;
 import com.zuehlke.fnf.masterbrain.akka.AkkaRule;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.messages.ScoredGenom;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.messages.ScoredPopulation;
@@ -13,6 +14,8 @@ import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.messages.Population;
 import com.zuehlke.fnf.masterbrain.akka.geneticalgorithm.numberguess.NumberGuessingEvaluation;
 import org.junit.Rule;
 import org.junit.Test;
+import scala.concurrent.Await;
+import scala.concurrent.Future;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -39,7 +42,7 @@ public class SelectionAndPairingActorTest {
 
             Props props = Props.create(SelectionAndPairingActor.class);
 
-            Configuration<Integer> configuration = new Configuration(6, null, NumberGuessingFitnessFunction.class, NumberGuessingPairing.class, null, new HashMap<>(), resultActor.getRef());
+            Configuration<Integer> configuration = new Configuration(6, null, NumberGuessingFitnessFunction.class, NumberGuessingPairing.class, null, new HashMap<>(), resultActor.getRef(), getSystem().dispatcher());
             Context context = new Context(null, null, null, terminationActor.getRef(), configuration);
 
             ActorRef subject = akka.actorOf(props);
@@ -61,8 +64,15 @@ public class SelectionAndPairingActorTest {
 
             Population<Integer> newPopulation = terminationActor.expectMsgClass(Population.class);
 
-            List<ScoredGenom<Integer>> collect = newPopulation.getPopulation().stream().map((i) -> new NumberGuessingEvaluation().evaluate(i, configuration)).collect(Collectors.toList());
-            Double sumScoreSecondGeneration = collect.stream().mapToDouble((sg) -> sg.getScore()).sum();
+            List<Future<ScoredGenom<Integer>>> collect = newPopulation.getPopulation().stream().map((i) -> new NumberGuessingEvaluation().evaluate(i, configuration)).collect(Collectors.toList());
+            Double sumScoreSecondGeneration = collect.stream().mapToDouble((sg) -> {
+                try {
+                    return Await.result(sg, Timeout.apply(1000).duration()).getScore();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return Double.MAX_VALUE;
+                }
+            }).sum();
             // because only the best survive and we don't do any mutation in this test, the second generation must be better
             assertThat(sumScoreSecondGeneration, is(lessThan(sumScoreFirstGeneration)));
         }};
