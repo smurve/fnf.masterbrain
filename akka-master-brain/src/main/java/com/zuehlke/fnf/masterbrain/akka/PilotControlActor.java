@@ -4,6 +4,8 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.dispatch.Futures;
+import akka.dispatch.OnComplete;
+import akka.dispatch.OnSuccess;
 import akka.pattern.Patterns;
 import com.typesafe.config.Config;
 import com.zuehlke.carrera.relayapi.messages.PenaltyMessage;
@@ -195,15 +197,16 @@ public class PilotControlActor extends UntypedActor {
         if (pilot != null) {
             LOGGER.info("Killing old pilot {}", pilot.getActorRef());
             Future<Boolean> stopped = Patterns.gracefulStop(pilot.getActorRef(), Duration.create(5, TimeUnit.SECONDS));
-            try {
-                Await.result(stopped, Duration.create(6, TimeUnit.SECONDS));
-                LOGGER.info("Pilot stopped.");
-            } catch (Exception e) {
-                LOGGER.error("Graceful stop of pilot actor failed.", e);
-            }
-
-            handleInfo(new Info("safety", "off", null));
-
+            stopped.andThen(new OnComplete<Boolean>() {
+                public void onComplete(Throwable failure, Boolean result) {
+                    if (failure == null) {
+                        LOGGER.info("Pilot stopped.");
+                    } else {
+                        LOGGER.error("Graceful stop of pilot actor failed.", failure);
+                    }
+                    handleInfo(new Info("safety", "off", null));
+                }
+            }, context().dispatcher());
         }
 
         // reset properties
