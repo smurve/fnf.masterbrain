@@ -64,7 +64,7 @@ public class RabbitConnectorService {
     @Scheduled(fixedRate = 2000)
     public void ensureConnection() {
         LOGGER.debug("ensureConnection");
-        pilotApi.connect(host);
+        //pilotApi.connect(host);
     }
 
     @Scheduled(fixedRate = 1000)
