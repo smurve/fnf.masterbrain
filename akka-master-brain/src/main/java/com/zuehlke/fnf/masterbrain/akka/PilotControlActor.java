@@ -175,7 +175,9 @@ public class PilotControlActor extends UntypedActor {
             Patterns.pipe(future, getContext().dispatcher()).to(webPublisher, getSelf());
         }*/
         Locations locations = Locations.from(track, message);
-        tell(locations, pilot.getActorRef(), getSender()).onMissingSender().ignore().andReturn();
+        if (pilot != null) {
+            tell(locations, pilot.getActorRef(), getSender()).onMissingSender().ignore().andReturn();
+        }
         tell(locations, webPublisher, getSender()).onMissingSender().ignore().andReturn();
     }
 
