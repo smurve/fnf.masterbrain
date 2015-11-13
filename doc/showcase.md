@@ -1,6 +1,6 @@
 # Show Case
 
-## Zlot-Cars Project by the Data Analytics Team
+## Masterbrain Project by the Data Analytics Team
 
 The data analytics team implemented a pilot framework for the [Fast and Furious](https://github.com/FastAndFurious) toolbox done by Wolfgang Giersche.
 
