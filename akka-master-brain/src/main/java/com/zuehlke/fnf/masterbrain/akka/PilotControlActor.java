@@ -162,7 +162,7 @@ public class PilotControlActor extends UntypedActor {
     }
 
     private void handleLocationPs(LocationPs message) {
-        Future<Locations> future = Futures.future(() -> {
+        /*Future<Locations> future = Futures.future(() -> {
             Locations locations = Locations.from(track, message);
             return locations;
         }, getContext().dispatcher());
@@ -173,7 +173,10 @@ public class PilotControlActor extends UntypedActor {
         if (webPublisher != null) {
             LOGGER.debug("Piping Locations to webpublisher");
             Patterns.pipe(future, getContext().dispatcher()).to(webPublisher, getSelf());
-        }
+        }*/
+        Locations locations = Locations.from(track, message);
+        tell(locations, pilot.getActorRef(), getSender()).onMissingSender().ignore().andReturn();
+        tell(locations, webPublisher, getSender()).onMissingSender().ignore().andReturn();
     }
 
     private void forwardToPilot(Object message) {

@@ -81,7 +81,7 @@ public class LocalizationActor extends UntypedActor {
         } else if (message instanceof Localize) {
             handleLocalization();
         } else if (message instanceof LocationPs) {
-            handleLocationPs((LocationPs)message);
+            handleLocationPs((LocationPs) message);
         } else if (message instanceof Track) {
             handleTrack((Track) message);
         } else if (message instanceof ResetCommand) {
@@ -91,7 +91,7 @@ public class LocalizationActor extends UntypedActor {
         } else if (message instanceof RegisterWebPublisher) {
             webPublisher = getContext().sender();
         } else if (message instanceof TimeDelta) {
-            delta = (TimeDelta)message;
+            delta = (TimeDelta) message;
         } else if (MESSAGE_CHECK_LOCALIZATION.equals(message)) {
             checkLocalization();
         } else {
@@ -100,7 +100,7 @@ public class LocalizationActor extends UntypedActor {
     }
 
     /**
-     * Checks if localization is still working. If no it triggers the recalculation that should fix it in R.
+     * Checks if localization is still working. If not it triggers the recalculation that should fix it in R.
      */
     private void checkLocalization() {
         if (track == null || rServ == null || (System.currentTimeMillis() - lastLocationMillis) < maxLastLocationMillis) {
@@ -110,7 +110,6 @@ public class LocalizationActor extends UntypedActor {
         LOGGER.warn("Localization broken.");
         //enterMissingLocalizationMode();
     }
-
 
 
     private void handleLocationPs(LocationPs message) {
@@ -190,6 +189,7 @@ public class LocalizationActor extends UntypedActor {
         } else {
             LOGGER.debug("No track, yet");
         }
+
         LOGGER.debug("Leaving Localization. Localization still running");
     }
 
